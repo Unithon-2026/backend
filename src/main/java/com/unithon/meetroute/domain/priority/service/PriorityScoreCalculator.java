@@ -6,21 +6,43 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * 규칙 기반 우선순위 점수 계산기. Sales_Activity(방문 이력) 데이터가 아직 없어
  * 지금은 Shop 컬럼만으로 채점한다. 아래 가중치/임계값은 바로 튜닝하도록
- * 파일 상단에 몰아둔 것 — 실제 CSV의 업태 값 종류를 확인한 뒤 목록을 확정해야 한다.
+ * 파일 상단에 몰아둔 것.
  */
 @Component
 public class PriorityScoreCalculator {
 
-    private static final Map<String, Integer> BUSINESS_TYPE_WEIGHTS = Map.of(
-            "한식음식점", 50,
-            "육류,고기요리 전문점", 50,
-            "일반음식점", 30
-    );
+    // 실제 DB의 businessType 값(상위 2000건 샘플) 기준 축산/식자재 수요 추정 가중치.
+    // 목록에 없는 값(희귀 업태 등)은 BUSINESS_TYPE_DEFAULT_WEIGHT로 처리.
+    private static final Map<String, Integer> BUSINESS_TYPE_WEIGHTS = new HashMap<>();
+    static {
+        BUSINESS_TYPE_WEIGHTS.put("식육(숯불구이)", 50);
+        BUSINESS_TYPE_WEIGHTS.put("호프/통닭", 45);
+        BUSINESS_TYPE_WEIGHTS.put("통닭(치킨)", 45);
+        BUSINESS_TYPE_WEIGHTS.put("한식", 40);
+        BUSINESS_TYPE_WEIGHTS.put("경양식", 35);
+        BUSINESS_TYPE_WEIGHTS.put("패밀리레스트랑", 35);
+        BUSINESS_TYPE_WEIGHTS.put("탕류(보신용)", 35);
+        BUSINESS_TYPE_WEIGHTS.put("뷔페식", 30);
+        BUSINESS_TYPE_WEIGHTS.put("중국식", 25);
+        BUSINESS_TYPE_WEIGHTS.put("일식", 20);
+        BUSINESS_TYPE_WEIGHTS.put("정종/대포집/소주방", 20);
+        BUSINESS_TYPE_WEIGHTS.put("감성주점", 20);
+        BUSINESS_TYPE_WEIGHTS.put("외국음식전문점(인도,태국등)", 20);
+        BUSINESS_TYPE_WEIGHTS.put("패스트푸드", 15);
+        BUSINESS_TYPE_WEIGHTS.put("이동조리", 10);
+        BUSINESS_TYPE_WEIGHTS.put("출장조리", 10);
+        BUSINESS_TYPE_WEIGHTS.put("푸드트럭", 10);
+        BUSINESS_TYPE_WEIGHTS.put("분식", 5);
+        BUSINESS_TYPE_WEIGHTS.put("김밥(도시락)", 5);
+        BUSINESS_TYPE_WEIGHTS.put("횟집", 5);
+        BUSINESS_TYPE_WEIGHTS.put("냉면집", 5);
+    }
     private static final int BUSINESS_TYPE_DEFAULT_WEIGHT = 0;
 
     private static final BigDecimal AREA_LARGE_THRESHOLD = new BigDecimal("200");
