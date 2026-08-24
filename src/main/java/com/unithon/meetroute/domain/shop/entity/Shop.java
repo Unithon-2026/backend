@@ -1,12 +1,7 @@
 package com.unithon.meetroute.domain.shop.entity;
 
 import com.unithon.meetroute.domain.priority.entity.PriorityGrade;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,10 +34,13 @@ public class Shop {
      */
     private String businessType;
 
+    @Column(precision = 10, scale = 2)
     private BigDecimal area;
 
+    @Column(precision = 10, scale = 6)
     private BigDecimal longitude;
 
+    @Column(precision = 10, scale = 6)
     private BigDecimal latitude;
 
     /**
