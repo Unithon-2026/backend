@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -53,6 +54,7 @@ public class Shop {
     @Enumerated(EnumType.STRING)
     private PriorityGrade priorityGrade;
 
+    @Builder
     public Shop(String name, String addressJibun, String gu, String dong, String phone,
                 String businessType, BigDecimal area, BigDecimal longitude, BigDecimal latitude) {
         this.name = name;

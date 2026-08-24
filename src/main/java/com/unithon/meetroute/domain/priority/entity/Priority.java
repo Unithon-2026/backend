@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,6 +37,7 @@ public class Priority {
 
     private LocalDateTime calculatedAt;
 
+    @Builder
     public Priority(Shop shop, int score, PriorityGrade priorityGrade, LocalDateTime calculatedAt) {
         this.shop = shop;
         this.score = score;
