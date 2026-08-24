@@ -25,10 +25,11 @@ public class ShopService {
     public Page<ShopListItemResponse> list(String gu, String businessType, String priorityGradeRaw, Pageable pageable) {
         PriorityGrade priorityGrade = parsePriorityGrade(priorityGradeRaw);
 
-        Specification<Shop> spec = Specification
-                .where(ShopSpecifications.hasGu(gu))
-                .and(ShopSpecifications.hasBusinessType(businessType))
-                .and(ShopSpecifications.hasPriorityGrade(priorityGrade));
+        Specification<Shop> spec = Specification.allOf(
+                ShopSpecifications.hasGu(gu),
+                ShopSpecifications.hasBusinessType(businessType),
+                ShopSpecifications.hasPriorityGrade(priorityGrade)
+        );
 
         return shopRepository.findAll(spec, pageable).map(ShopListItemResponse::from);
     }

@@ -12,21 +12,21 @@ public class ShopSpecifications {
 
     public static Specification<Shop> hasGu(String gu) {
         if (!StringUtils.hasText(gu)) {
-            return null;
+            return Specification.unrestricted();
         }
         return (root, query, cb) -> cb.equal(root.get("gu"), gu);
     }
 
     public static Specification<Shop> hasBusinessType(String businessType) {
         if (!StringUtils.hasText(businessType)) {
-            return null;
+            return Specification.unrestricted();
         }
         return (root, query, cb) -> cb.equal(root.get("businessType"), businessType);
     }
 
     public static Specification<Shop> hasPriorityGrade(PriorityGrade priorityGrade) {
         if (priorityGrade == null) {
-            return null;
+            return Specification.unrestricted();
         }
         return (root, query, cb) -> cb.equal(root.get("priorityGrade"), priorityGrade);
     }
