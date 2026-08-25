@@ -1,14 +1,19 @@
 package com.unithon.meetroute.domain.shop.controller;
 
+import com.unithon.meetroute.domain.auth.SessionConst;
 import com.unithon.meetroute.domain.shop.briefing.dto.BriefingResponse;
 import com.unithon.meetroute.domain.shop.briefing.service.ShopBriefingService;
 import com.unithon.meetroute.domain.shop.dto.ShopDetailResponse;
 import com.unithon.meetroute.domain.shop.dto.ShopListItemResponse;
 import com.unithon.meetroute.domain.shop.dto.ShopMapMarkerResponse;
 import com.unithon.meetroute.domain.shop.service.ShopService;
+import com.unithon.meetroute.global.exception.BusinessException;
+import com.unithon.meetroute.global.exception.ErrorCode;
 import com.unithon.meetroute.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -67,8 +72,18 @@ public class ShopController {
     }
 
     @PostMapping("/{shopId}/briefing")
-    @Operation(summary = "AI 영업 브리핑 생성", description = "매장의 인허가 데이터를 바탕으로 Claude API를 1회 호출해 영업 접근 방법을 요약한 브리핑 텍스트를 생성합니다.")
-    public ApiResponse<BriefingResponse> briefing(@PathVariable Long shopId) {
-        return ApiResponse.success(shopBriefingService.generateBriefing(shopId));
+    @Operation(summary = "AI 영업 브리핑 생성", description = "로그인한 영업사원 본인의 방문 메모(있다면)와 매장 인허가 데이터를 바탕으로 Claude API를 1회 호출해 영업 접근 방법을 요약한 브리핑 텍스트를 생성합니다.")
+    public ApiResponse<BriefingResponse> briefing(@PathVariable Long shopId, HttpServletRequest servletRequest) {
+        Long userId = currentUserId(servletRequest);
+        return ApiResponse.success(shopBriefingService.generateBriefing(shopId, userId));
+    }
+
+    private Long currentUserId(HttpServletRequest servletRequest) {
+        HttpSession session = servletRequest.getSession(false);
+        Long userId = session != null ? (Long) session.getAttribute(SessionConst.LOGIN_USER_ID) : null;
+        if (userId == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+        return userId;
     }
 }
