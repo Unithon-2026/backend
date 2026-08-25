@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
+@Table(name = "shop", indexes = @Index(name = "idx_shop_lat_lng", columnList = "latitude, longitude"))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Shop {

@@ -4,6 +4,7 @@ import com.unithon.meetroute.domain.shop.briefing.dto.BriefingResponse;
 import com.unithon.meetroute.domain.shop.briefing.service.ShopBriefingService;
 import com.unithon.meetroute.domain.shop.dto.ShopDetailResponse;
 import com.unithon.meetroute.domain.shop.dto.ShopListItemResponse;
+import com.unithon.meetroute.domain.shop.dto.ShopMapMarkerResponse;
 import com.unithon.meetroute.domain.shop.service.ShopService;
 import com.unithon.meetroute.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Tag(name = "매장 컨트롤러")
 @RestController
@@ -38,6 +42,22 @@ public class ShopController {
             @PageableDefault(size = 20, sort = "score", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ApiResponse.success(shopService.list(gu, businessType, priorityGrade, pageable));
+    }
+
+    @GetMapping("/map")
+    @Operation(summary = "지도 영역 내 매장 조회", description = "지도 화면에 보이는 영역(bounding box) 안의 매장을 우선순위 점수 기준으로 최대 limit개까지 조회합니다.")
+    public ApiResponse<List<ShopMapMarkerResponse>> findInBoundingBox(
+            @RequestParam BigDecimal minLatitude,
+            @RequestParam BigDecimal maxLatitude,
+            @RequestParam BigDecimal minLongitude,
+            @RequestParam BigDecimal maxLongitude,
+            @RequestParam(required = false) String gu,
+            @RequestParam(required = false) String businessType,
+            @RequestParam(required = false) String priorityGrade,
+            @RequestParam(required = false) Integer limit
+    ) {
+        return ApiResponse.success(shopService.findInBoundingBox(
+                minLatitude, maxLatitude, minLongitude, maxLongitude, gu, businessType, priorityGrade, limit));
     }
 
     @GetMapping("/{shopId}")

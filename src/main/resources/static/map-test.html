@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>매장 지도 테스트</title>
+<style>
+    html, body { margin: 0; padding: 0; height: 100%; font-family: sans-serif; }
+    #map { width: 100%; height: 100%; }
+    #status {
+        position: absolute; top: 10px; left: 10px; z-index: 10;
+        background: white; padding: 6px 10px; border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.3); font-size: 13px;
+    }
+</style>
+</head>
+<body>
+<div id="status">지도를 움직이면 영역 내 매장을 다시 불러옵니다.</div>
+<div id="map"></div>
+
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=KAKAO_MAP_KEY&libraries=services"></script>
+<script>
+    const statusEl = document.getElementById('status');
+    let markers = [];
+    let infoWindow = null;
+    let fetchTimer = null;
+
+    const map = new kakao.maps.Map(document.getElementById('map'), {
+        center: new kakao.maps.LatLng(37.4979, 127.0276), // 강남역 근처 기본값
+        level: 4
+    });
+
+    function clearMarkers() {
+        markers.forEach(m => m.setMap(null));
+        markers = [];
+    }
+
+    function gradeColor(grade) {
+        switch (grade) {
+            case 'S': return '#e53935';
+            case 'A': return '#fb8c00';
+            case 'B': return '#fdd835';
+            default: return '#757575';
+        }
+    }
+
+    async function loadShopsInBounds() {
+        const bounds = map.getBounds();
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+
+        const params = new URLSearchParams({
+            minLatitude: sw.getLat(),
+            maxLatitude: ne.getLat(),
+            minLongitude: sw.getLng(),
+            maxLongitude: ne.getLng()
+        });
+
+        statusEl.textContent = '불러오는 중...';
+        try {
+            const res = await fetch('/api/v1/shops/map?' + params.toString());
+            const body = await res.json();
+            if (!body.success) {
+                statusEl.textContent = '오류: ' + body.message;
+                return;
+            }
+            renderMarkers(body.data);
+            statusEl.textContent = `매장 ${body.data.length}건 표시 중`;
+        } catch (e) {
+            statusEl.textContent = '요청 실패: ' + e;
+        }
+    }
+
+    function renderMarkers(shops) {
+        clearMarkers();
+        shops.forEach(shop => {
+            if (shop.latitude == null || shop.longitude == null) return;
+
+            const position = new kakao.maps.LatLng(shop.latitude, shop.longitude);
+            const marker = new kakao.maps.Marker({ position, map });
+
+            kakao.maps.event.addListener(marker, 'click', () => {
+                if (infoWindow) infoWindow.close();
+                infoWindow = new kakao.maps.InfoWindow({
+                    content: `
+                        <div style="padding:8px; font-size:13px; max-width:220px;">
+                            <strong>${shop.name}</strong>
+                            (<span style="color:${gradeColor(shop.priorityGrade)}">${shop.priorityGrade}</span>, ${shop.score}점)<br>
+                            ${shop.businessType || ''}<br>
+                            ${shop.addressJibun || ''}<br>
+                            ${shop.phone || '전화번호 없음'}
+                        </div>`
+                });
+                infoWindow.open(map, marker);
+            });
+
+            markers.push(marker);
+        });
+    }
+
+    kakao.maps.event.addListener(map, 'idle', () => {
+        clearTimeout(fetchTimer);
+        fetchTimer = setTimeout(loadShopsInBounds, 300);
+    });
+
+    loadShopsInBounds();
+</script>
+</body>
+</html>
