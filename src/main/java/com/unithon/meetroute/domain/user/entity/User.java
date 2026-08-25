@@ -24,19 +24,23 @@ public class User {
     @Column(length = 50, nullable = false)
     private String name;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = false, unique = true)
     private String email;
 
     @Column(length = 30)
     private String phone;
 
+    @Column(length = 100, nullable = false)
+    private String password;
+
     private Long assignedRegionId;
 
     @Builder
-    public User(String name, String email, String phone, Long assignedRegionId) {
+    public User(String name, String email, String phone, String password, Long assignedRegionId) {
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.password = password;
         this.assignedRegionId = assignedRegionId;
     }
 }
