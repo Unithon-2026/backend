@@ -7,7 +7,7 @@
 - 매장 상세 정보와 사용자가 남긴 영업 메모를 기반으로 매장별 맞춤 영업 전략 AI 브리핑을 생성합니다.
 
 ## 📡 시스템 아키텍처
-
+<img width="1111" height="764" alt="Image" src="https://github.com/user-attachments/assets/0df57edb-e4a6-4a8f-8f44-a2f604cc74dc" />
 
 ## 🛠 기술 스택
 
