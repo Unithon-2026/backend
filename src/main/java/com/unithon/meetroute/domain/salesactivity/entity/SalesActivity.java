@@ -55,9 +55,12 @@ public class SalesActivity {
         this.visitedAt = visitedAt;
     }
 
-    public void update(VisitStatus status, String memo, LocalDate visitedAt) {
+    public void recordVisit(VisitStatus status, LocalDate visitedAt) {
         this.status = status;
-        this.memo = memo;
         this.visitedAt = visitedAt;
+    }
+
+    public void updateMemo(String memo) {
+        this.memo = memo;
     }
 }
