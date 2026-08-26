@@ -94,10 +94,10 @@ Swagger UI: `/swagger-ui/index.html`
 | POST | `/api/v1/auth/signup` | 영업사원 회원가입 |
 | POST | `/api/v1/auth/login` | 로그인, 세션 발급 |
 | POST | `/api/v1/auth/logout` | 로그아웃 |
-| GET | `/api/v1/shops` | 매장 목록 조회 (지역구/업태/등급 필터, 페이징) |
+| GET | `/api/v1/shops` | 매장 목록 조회 (지역구/업종/우선순위 필터, 페이징) |
 | GET | `/api/v1/shops/map` | 지도 bounding box 내 매장 조회 |
 | GET | `/api/v1/shops/{shopId}` | 매장 상세 조회 |
-| POST | `/api/v1/shops/{shopId}/briefing` | AI 영업 브리핑 생성 (로그인 필요) |
+| POST | `/api/v1/shops/{shopId}/briefing` | AI 영업 브리핑 생성 |
 | POST | `/api/v1/shops/{shopId}/bookmark` | 매장 북마크 추가 |
 | DELETE | `/api/v1/shops/{shopId}/bookmark` | 매장 북마크 해제 |
 | GET | `/api/v1/bookmarks` | 내 북마크 매장 목록 조회 |
