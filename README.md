@@ -45,6 +45,12 @@ src/main/java/com/unithon/meetroute
 │   │       ├── service/ShopBriefingService.java
 │   │       └── dto/BriefingResponse.java
 │   │
+│   ├── bookmark                  # 매장 북마크
+│   │   ├── controller/BookmarkController.java
+│   │   ├── service/BookmarkService.java
+│   │   ├── entity/Bookmark.java
+│   │   └── repository/BookmarkRepository.java
+│   │
 │   ├── salesActivity             # 매장 방문 이력 / 메모
 │   │   ├── controller/SalesActivityController.java
 │   │   ├── service/SalesActivityService.java
@@ -77,6 +83,7 @@ src/main/java/com/unithon/meetroute
 - **User** — 영업사원 계정.
 - **SalesActivity** — 사용자(영업사원)의 방문 이력(방문 회차, 메모, 방문일).
 - **Priority** — 매장별 영업 우선순위 점수/등급 계산 결과
+- **Bookmark** — 영업사원이 관심 매장을 저장해두는 북마크
 
 ## 📄 API
 
@@ -91,6 +98,9 @@ Swagger UI: `/swagger-ui/index.html`
 | GET | `/api/v1/shops/map` | 지도 bounding box 내 매장 조회 |
 | GET | `/api/v1/shops/{shopId}` | 매장 상세 조회 |
 | POST | `/api/v1/shops/{shopId}/briefing` | AI 영업 브리핑 생성 (로그인 필요) |
+| POST | `/api/v1/shops/{shopId}/bookmark` | 매장 북마크 추가 |
+| DELETE | `/api/v1/shops/{shopId}/bookmark` | 매장 북마크 해제 |
+| GET | `/api/v1/bookmarks` | 내 북마크 매장 목록 조회 |
 | POST | `/api/v1/shops/{shopId}/sales_activity` | 매장 방문 기록 |
 | POST | `/api/v1/shops/{shopId}/sales_activity/memo` | 방문 메모 기록 |
 | GET | `/api/v1/shops/{shopId}/sales_activity` | 방문 이력 목록 조회 |

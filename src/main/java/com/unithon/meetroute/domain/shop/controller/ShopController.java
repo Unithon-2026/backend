@@ -44,9 +44,10 @@ public class ShopController {
             @RequestParam(required = false) String gu,
             @RequestParam(required = false) String businessType,
             @RequestParam(required = false) String priorityGrade,
-            @PageableDefault(size = 20, sort = "score", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 20, sort = "score", direction = Sort.Direction.DESC) Pageable pageable,
+            HttpServletRequest servletRequest
     ) {
-        return ApiResponse.success(shopService.list(gu, businessType, priorityGrade, pageable));
+        return ApiResponse.success(shopService.list(gu, businessType, priorityGrade, pageable, currentUserIdOrNull(servletRequest)));
     }
 
     @GetMapping("/map")
@@ -67,8 +68,8 @@ public class ShopController {
 
     @GetMapping("/{shopId}")
     @Operation(summary = "매장 상세 조회", description = "매장 ID로 인허가 정보, 위치, 우선순위 등 상세 정보를 조회합니다.")
-    public ApiResponse<ShopDetailResponse> getDetail(@PathVariable Long shopId) {
-        return ApiResponse.success(shopService.getDetail(shopId));
+    public ApiResponse<ShopDetailResponse> getDetail(@PathVariable Long shopId, HttpServletRequest servletRequest) {
+        return ApiResponse.success(shopService.getDetail(shopId, currentUserIdOrNull(servletRequest)));
     }
 
     @PostMapping("/{shopId}/briefing")
@@ -79,11 +80,15 @@ public class ShopController {
     }
 
     private Long currentUserId(HttpServletRequest servletRequest) {
-        HttpSession session = servletRequest.getSession(false);
-        Long userId = session != null ? (Long) session.getAttribute(SessionConst.LOGIN_USER_ID) : null;
+        Long userId = currentUserIdOrNull(servletRequest);
         if (userId == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
         return userId;
+    }
+
+    private Long currentUserIdOrNull(HttpServletRequest servletRequest) {
+        HttpSession session = servletRequest.getSession(false);
+        return session != null ? (Long) session.getAttribute(SessionConst.LOGIN_USER_ID) : null;
     }
 }

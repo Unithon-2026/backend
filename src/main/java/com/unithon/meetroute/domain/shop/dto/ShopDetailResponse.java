@@ -17,9 +17,10 @@ public record ShopDetailResponse(
         BigDecimal longitude,
         BigDecimal latitude,
         Integer score,
-        PriorityGrade priorityGrade
+        PriorityGrade priorityGrade,
+        boolean isBookmarked
 ) {
-    public static ShopDetailResponse from(Shop shop) {
+    public static ShopDetailResponse from(Shop shop, boolean isBookmarked) {
         return new ShopDetailResponse(
                 shop.getId(),
                 shop.getName(),
@@ -32,7 +33,8 @@ public record ShopDetailResponse(
                 shop.getLongitude(),
                 shop.getLatitude(),
                 shop.getScore(),
-                shop.getPriorityGrade()
+                shop.getPriorityGrade(),
+                isBookmarked
         );
     }
 }

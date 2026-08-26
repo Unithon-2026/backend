@@ -1,5 +1,6 @@
 package com.unithon.meetroute.domain.shop.service;
 
+import com.unithon.meetroute.domain.bookmark.repository.BookmarkRepository;
 import com.unithon.meetroute.domain.priority.entity.PriorityGrade;
 import com.unithon.meetroute.domain.shop.dto.ShopDetailResponse;
 import com.unithon.meetroute.domain.shop.dto.ShopListItemResponse;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +33,9 @@ public class ShopService {
     private static final int MAX_MAP_LIMIT = 1000;
 
     private final ShopRepository shopRepository;
+    private final BookmarkRepository bookmarkRepository;
 
-    public Page<ShopListItemResponse> list(String gu, String businessType, String priorityGradeRaw, Pageable pageable) {
+    public Page<ShopListItemResponse> list(String gu, String businessType, String priorityGradeRaw, Pageable pageable, Long userId) {
         PriorityGrade priorityGrade = parsePriorityGrade(priorityGradeRaw);
 
         Specification<Shop> spec = Specification.allOf(
@@ -40,11 +44,24 @@ public class ShopService {
                 ShopSpecifications.hasPriorityGrade(priorityGrade)
         );
 
-        return shopRepository.findAll(spec, pageable).map(ShopListItemResponse::from);
+        Page<Shop> shops = shopRepository.findAll(spec, pageable);
+        Set<Long> bookmarkedShopIds = bookmarkedShopIds(userId, shops.getContent());
+
+        return shops.map(shop -> ShopListItemResponse.from(shop, bookmarkedShopIds.contains(shop.getId())));
     }
 
-    public ShopDetailResponse getDetail(Long shopId) {
-        return ShopDetailResponse.from(findShopOrThrow(shopId));
+    public ShopDetailResponse getDetail(Long shopId, Long userId) {
+        Shop shop = findShopOrThrow(shopId);
+        boolean isBookmarked = userId != null && bookmarkRepository.existsByShop_IdAndUser_Id(shopId, userId);
+        return ShopDetailResponse.from(shop, isBookmarked);
+    }
+
+    private Set<Long> bookmarkedShopIds(Long userId, List<Shop> shops) {
+        if (userId == null || shops.isEmpty()) {
+            return Set.of();
+        }
+        List<Long> shopIds = shops.stream().map(Shop::getId).toList();
+        return new HashSet<>(bookmarkRepository.findShopIdsByUser_IdAndShop_IdIn(userId, shopIds));
     }
 
     public List<ShopMapMarkerResponse> findInBoundingBox(

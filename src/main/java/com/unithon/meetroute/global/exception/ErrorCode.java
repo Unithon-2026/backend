@@ -20,7 +20,8 @@ public enum ErrorCode {
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "USER4002", "이메일 또는 비밀번호가 올바르지 않습니다."),
 
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON401", "로그인이 필요합니다."),
-    SALES_ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "SALES4001", "방문 기록을 찾을 수 없습니다. 먼저 방문을 기록해주세요.");
+    SALES_ACTIVITY_NOT_FOUND(HttpStatus.NOT_FOUND, "SALES4001", "방문 기록을 찾을 수 없습니다. 먼저 방문을 기록해주세요."),
+    BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOKMARK4001", "북마크한 매장이 아닙니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

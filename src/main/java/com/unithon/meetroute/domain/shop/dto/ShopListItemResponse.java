@@ -10,9 +10,10 @@ public record ShopListItemResponse(
         String dong,
         String businessType,
         Integer score,
-        PriorityGrade priorityGrade
+        PriorityGrade priorityGrade,
+        boolean isBookmarked
 ) {
-    public static ShopListItemResponse from(Shop shop) {
+    public static ShopListItemResponse from(Shop shop, boolean isBookmarked) {
         return new ShopListItemResponse(
                 shop.getId(),
                 shop.getName(),
@@ -20,7 +21,8 @@ public record ShopListItemResponse(
                 shop.getDong(),
                 shop.getBusinessType(),
                 shop.getScore(),
-                shop.getPriorityGrade()
+                shop.getPriorityGrade(),
+                isBookmarked
         );
     }
 }
