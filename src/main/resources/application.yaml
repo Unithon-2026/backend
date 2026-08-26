@@ -28,3 +28,7 @@ spring:
       api-key: ${ANTHROPIC_API_KEY}
       chat:
         model: claude-haiku-4-5
+
+app:
+  cors:
+    allowed-origins: http://localhost:3000
